@@ -64,3 +64,29 @@ function Get-SkykickExchangeBackup {
     }
     Write-Output $Response
 }
+function Get-SkykickSPODBackup {
+    param (
+        [Parameter(Mandatory=$true)] 
+        [String] $User,
+        [Parameter(Mandatory=$true)] 
+        [String] $Key,
+        [Parameter(Mandatory=$true)] 
+        [String] $SubscriptionID
+
+    )
+    try {
+        $AuthToken = (Get-SkykickSession -User $User -Key $Key).access_token
+        $Headers = @{
+            'Authorization' = "Bearer $AuthToken"
+            'Content-Type' = 'application/json'
+            'Accept' = 'application/json'
+            'Ocp-Apim-Subscription-Key' = $Key
+        }
+        $Response = Invoke-RestMethod -Uri "https://apis.skykick.com/Backup/$SubscriptionID/sharepoint/reportusage" -Headers $Headers -Method "Post"
+    }
+    catch {
+        throw $_
+    }
+    Write-Output $Response
+}
+
