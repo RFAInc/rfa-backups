@@ -89,4 +89,26 @@ function Get-SkykickSPODBackup {
     }
     Write-Output $Response
 }
-
+function Get-SkykickAlerts {
+    param (
+        [Parameter(Mandatory=$true)] 
+        [String] $User,
+        [Parameter(Mandatory=$true)] 
+        [String] $Key
+    )
+    try {
+        $AuthToken = (Get-SkykickSession -User $User -Key $Key).access_token
+        $Headers = @{
+            'Authorization' = "Bearer $AuthToken"
+            'Content-Type' = 'application/json'
+            'Accept' = 'application/json'
+            'Ocp-Apim-Subscription-Key' = $Key
+        }
+        $Response = Invoke-RestMethod -Uri "https://apis.skykick.com/workqueue" -Headers $Headers -Method "Get"
+    }
+    catch {
+        throw $_
+    }
+    $Alerts = $Response | Where-Object {$_.workitemtype -eq 'AlertNotification'}
+    Write-Output $Alerts
+}
