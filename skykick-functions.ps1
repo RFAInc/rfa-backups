@@ -109,6 +109,6 @@ function Get-SkykickAlerts {
     catch {
         throw $_
     }
-    $Alerts = $Response | Where-Object {$_.workitemtype -eq 'AlertNotification'}
+    $Alerts = ($Response | Where-Object {$_.workitemtype -eq 'AlertNotification'}).data
     Write-Output $Alerts
 }
