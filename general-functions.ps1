@@ -28,11 +28,15 @@ function Invoke-MySqlMethod{
         [String] $Query
     )
 
-    # Adds MySql dependancy file to system directory
-    if (!(Test-Path "$env:SystemRoot\MySql.Data.dll")){
-        Copy-Item -Path "$PSScriptRoot\MySql.Data.dll" -Destination "$env:SystemRoot\MySql.Data.dll"
+    # Loads MySql dependancy file 
+    if (Test-Path "$env:SystemRoot/MySql.Data.dll"){
+        Add-Type -Path "$env:SystemRoot/MySql.Data.dll"
+    }elseif (Test-Path "./MySql.Data.dll") {
+        Add-Type -Path "./MySql.Data.dll"
+    }else {
+        Invoke-WebRequest "https://github.com/RFAInc/rfa-backups/blob/main/MySql.Data.dll?raw=true" -Outfile "./MySql.Data.dll"
+        Add-Type -Path "./MySql.Data.dll"
     }
-    Add-Type -Path "$env:SystemRoot\MySql.Data.dll"
 
     # Builds Connection
     $ConnectionString = "server=" + $Server + "; port=3306; uid=" + $User + "; pwd=" + $Pass + "; database="+$DataBase
