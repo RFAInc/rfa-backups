@@ -130,8 +130,11 @@ function Get-RubrikProtectionStatus {
         [String]$Pass
     )
     #TODO: make api calls to find any available protectionstatus report with the required columns
-    $Response = Get-RubrikReportData -Server $Server -User $User -Pass $Pass -ReportID "CustomReport:::8d6585a8-960e-432c-b2a7-c1c788bf313e"
-    Write-Output $Response.object
+    $Session = Get-RubrikSession -Server $Server -User $User -Pass $Pass
+    $RLResponse = Invoke-RubrikRest -Server $Session.server -Token $Session.token -Endpoint "/internal/report?report_template=ProtectionTasksDetails&name=Protection Tasks Details&report_type=Canned" -Method "GET"
+    $ReportID = $RLResponse.data.id
+    $RDResponse = Get-RubrikReportData -Server $Server -User $User -Pass $Pass -ReportID $ReportID
+    Write-Output $RDResponse.object
 }
 function Get-RubrikMonitoringObject{
     [CmdletBinding()]
