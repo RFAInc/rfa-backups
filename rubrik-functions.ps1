@@ -129,7 +129,6 @@ function Get-RubrikProtectionStatus {
         [Parameter(Mandatory = $true)]
         [String]$Pass
     )
-    #TODO: make api calls to find any available protectionstatus report with the required columns
     $Session = Get-RubrikSession -Server $Server -User $User -Pass $Pass
     $RLResponse = Invoke-RubrikRest -Server $Session.server -Token $Session.token -Endpoint "/internal/report?report_template=ProtectionTasksDetails&name=Protection Tasks Details&report_type=Canned" -Method "GET"
     $ReportID = $RLResponse.data.id
